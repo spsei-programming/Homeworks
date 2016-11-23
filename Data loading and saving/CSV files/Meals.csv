@@ -1,11 +1,11 @@
-MealId;Name;Description;Calories;Alergens
-1;Øízek s bramborovım salátem;Vepøovı øízek s lehkım bramborovım salátkem (obsahuje mrkev, brambory, majonézu, hrášek);2300;1,3
-3;emlovka;Klasická emlovka s plátky jablíèek, kousky vlašskıch oøíškù, tvarohem a skoøicí.;2400;1,3,8
-2;Buchtièky se šodó;Buchtièky s vanilkovım krémem;1900;1,3
-4;Zelòaèka;Zelòaèka s vepøovım uzenım masem;1750;1
-5;Segedinskı guláš;Segedinskı guláš z vepøového masa se zelím a houskovım knedlíkem;1890;1,7,
-6;Kuøe na paprice;Kuøe na paprice se smetanou;2060;7
-4;Vepøová krkovièka se zeleninou;Vepøová krkovièka se zeleninou (mrkev, petrel, celer, hrášek);1700;4,11
-8;Hovìzí svíèková;Falešná hovìzí svíèková na koøenové zeleninì, se smetanou a houskovım knedlíkem, šlehaèkou a brusinkami;2100;1,7
-9;Kuøecí Gordon Blue;Kuøecí maso plnìné šunkou a sırem obalené v trojobalu;2200;1
-0;Marinovaná vepøová panenka;Marinovaná vepøová panenka s hranolkami a tatarkou;2600;3
+MealId;Name;Description;Calories;Allergens
+1;Å˜Ã­zek s bramborovÃ½m salÃ¡tem;VepÅ™ovÃ½ Å™Ã­zek s lehkÃ½m bramborovÃ½m salÃ¡tkem (obsahuje mrkev, brambory, majonÃ©zu, hrÃ¡Å¡ek);2300;1,3
+3;Å½emlovka;KlasickÃ¡ Å¾emlovka s plÃ¡tky jablÃ­Äek, kousky vlaÅ¡skÃ½ch oÅ™Ã­Å¡kÅ¯, tvarohem a skoÅ™icÃ­.;2400;1,3,8
+2;BuchtiÄky se Å¡odÃ³;BuchtiÄky s vanilkovÃ½m krÃ©mem;1900;1,3
+4;ZelÅˆaÄka;ZelÅˆaÄka s vepÅ™ovÃ½m uzenÃ½m masem;1750;1
+5;SegedinskÃ½ gulÃ¡Å¡;SegedinskÃ½ gulÃ¡Å¡ z vepÅ™ovÃ©ho masa se zelÃ­m a houskovÃ½m knedlÃ­kem;1890;1,7,
+6;KuÅ™e na paprice;KuÅ™e na paprice se smetanou;2060;7
+4;VepÅ™ovÃ¡ krkoviÄka se zeleninou;VepÅ™ovÃ¡ krkoviÄka se zeleninou (mrkev, petrÅ¾el, celer, hrÃ¡Å¡ek);1700;4,11
+8;HovÄ›zÃ­ svÃ­ÄkovÃ¡;FaleÅ¡nÃ¡ hovÄ›zÃ­ svÃ­ÄkovÃ¡ na koÅ™enovÃ© zeleninÄ›, se smetanou a houskovÃ½m knedlÃ­kem, Å¡lehaÄkou a brusinkami;2100;1,7
+9;KuÅ™ecÃ­ Gordon Blue;KuÅ™ecÃ­ maso plnÄ›nÃ© Å¡unkou a sÃ½rem obalenÃ© v trojobalu;2200;1
+0;MarinovanÃ¡ vepÅ™ovÃ¡ panenka;MarinovanÃ¡ vepÅ™ovÃ¡ panenka s hranolkami a tatarkou;2600;3
