@@ -1,0 +1,10 @@
+UserId;Username;First name;Last name;Role
+1;ondra@abc.cz;Ondrej;Valenta;User
+2;petra@abc.cz;Petr;Matuška;User
+3;honza@abc.cz;Jan;Vampír;User
+7;martin@abc.cz;Martin;Kolomazník;User
+8;josef@abc.cz;Josef;Stonohý;User
+9;jana@abc.cz;Jana;Zvelkédálky;"User;MealsAdministrator"
+10;maruska@abc.cz;Marie;Troufalá;"User;MealsAdministrator;OrdersAdministrator"
+13;honza@abc.cz;Jan;Nepomucký;"User;ReportingAdmin"
+16;oliver@abc.cz;Oliver;Odvážný;PowerUser
