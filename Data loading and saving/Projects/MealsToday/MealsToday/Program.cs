@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MealsToday.Data;
 using MealsToday.Helpers;
 
 namespace MealsToday
@@ -12,7 +13,42 @@ namespace MealsToday
 	{
 		static void Main(string[] args)
 		{
-			CSVLoader.LoadUserData(@"C:\Git\spsei-programming\Homeworks\Data loading and saving\CSV files\Users.csv");
+			var users = CSVLoader.LoadUserData(@"C:\Git\spsei-programming\Homeworks\Data loading and saving\CSV files\Users.csv");
+
+			users.ForEach(x => Console.WriteLine(x.FullName));
+
+			Context.AllUsers = users;
+
+			LogIn();
+
+			Console.WriteLine("Current user is:");
+			Console.WriteLine(Context.CurrentUser.FullName);
+		}
+
+		public static void LogIn()
+		{
+			Console.Write("Username:");
+			var username = Console.ReadLine();
+			Console.Write("Password:");
+			var password = Console.ReadLine();
+
+			bool userFound = false;
+
+			foreach (User user in Context.AllUsers)
+			{
+				if (user.Username.Equals(username, StringComparison.InvariantCultureIgnoreCase) 
+					&& user.Password == password)
+				{
+					Context.CurrentUser = user;
+					userFound = true;
+					break;
+				}
+			}
+
+			if (!userFound)
+			{
+				throw new UnauthorizedAccessException("Wrong password or username.");
+			}
 		}
 	}
 }

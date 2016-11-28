@@ -47,6 +47,7 @@
     <Compile Include="Data\Meal.cs" />
     <Compile Include="Data\User.cs" />
     <Compile Include="Enums\UserRoles.cs" />
+    <Compile Include="Helpers\Context.cs" />
     <Compile Include="Helpers\CSVLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

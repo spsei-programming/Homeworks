@@ -20,5 +20,7 @@ namespace MealsToday.Data
 		{
 			get { return LastName + " " + FirstName; }
 		}
+
+		public string Password { get; set; }
 	}
 }
