@@ -13,7 +13,7 @@ namespace MealsToday
 	{
 		static void Main(string[] args)
 		{
-			var users = CSVLoader.LoadUserData(@"C:\Git\spsei-programming\Homeworks\Data loading and saving\CSV files\Users.csv");
+			var users = CSVLoader.LoadUserData(@"Users.csv");
 
 			users.ForEach(x => Console.WriteLine(x.FullName));
 
