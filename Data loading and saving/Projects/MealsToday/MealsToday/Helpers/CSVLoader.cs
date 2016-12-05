@@ -65,7 +65,10 @@ namespace MealsToday.Helpers
 
 		private static Allergen parseAllergenRow(string row)
 		{
-			return new Allergen();
+			var dataParts = row.Split(';');
+			var name = dataParts[1].Replace('"', ' ').Trim();
+			
+			return new Allergen(Convert.ToInt32(dataParts[0]), name);
 		}
 
 		private static Meal parseMealRow(string row)
@@ -117,7 +120,20 @@ namespace MealsToday.Helpers
 
 		public static List<Allergen> LoadAllergenData(string filePath)
 		{
-			return new List<Allergen>();
+			if (!File.Exists(filePath))
+			{
+				throw new FileNotFoundException("File not found", filePath);
+			}
+			var allergens = new List<Allergen>();
+			string[] allLines = File.ReadAllLines(filePath, Encoding.UTF8);
+
+			for (int i = 1; i < allLines.Length; i++)
+			{
+				var allergen = parseAllergenRow(allLines[i]);
+				allergens.Add(allergen);
+			}
+
+			return allergens;
 		}
 
 		public static List<Meal> LoadMealData(string filePath)

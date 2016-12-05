@@ -7,5 +7,6 @@ namespace MealsToday.Helpers
 	{
 		public static User CurrentUser { get; set; }
 		public static List<User> AllUsers { get; set; }
+		public static List<Allergen> Allergens { get; set; }
 	}
 }
