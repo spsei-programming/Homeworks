@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -12,6 +13,8 @@ namespace MealsToday.Helpers
 {
 	public static class CSVLoader
 	{
+		#region Private methods
+
 		private static UserRoles mapUserRole(string role)
 		{
 			//User; MealsAdministrator; OrdersAdministrator
@@ -70,6 +73,30 @@ namespace MealsToday.Helpers
 			return new Meal();
 		}
 
+		public static string GetCSVPath(FileTypes fileType)
+		{
+			var baseDirectory = ConfigurationManager.AppSettings["CSVFilesFolder"];
+
+			switch (fileType)
+			{
+				case FileTypes.Meals:
+					return Path.Combine(baseDirectory, "Meals.csv");
+				case FileTypes.Users:
+					return Path.Combine(baseDirectory, "Users.csv");
+				case FileTypes.Orders:
+					return Path.Combine(baseDirectory, "Orders.csv");
+				case FileTypes.Allergens:
+					return Path.Combine(baseDirectory, "Allergens.csv");
+				default:
+					throw new ArgumentOutOfRangeException(nameof(fileType), fileType, null);
+			}
+
+
+			return (baseDirectory + "\\" + fileType);
+		}
+
+		#endregion
+
 		public static List<User> LoadUserData(string filePath)
 		{
 			if (!File.Exists(filePath))
@@ -98,5 +125,4 @@ namespace MealsToday.Helpers
 			return new List<Meal>();
 		}
 	}
-
 }
