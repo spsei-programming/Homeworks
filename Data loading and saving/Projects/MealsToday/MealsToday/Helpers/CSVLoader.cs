@@ -66,14 +66,27 @@ namespace MealsToday.Helpers
 		private static Allergen parseAllergenRow(string row)
 		{
 			var dataParts = row.Split(';');
-			var name = dataParts[1].Replace('"', ' ').Trim();
+			var name = dataParts[1].Trim('"').Trim();
 			
 			return new Allergen(Convert.ToInt32(dataParts[0]), name);
 		}
 
 		private static Meal parseMealRow(string row)
 		{
-			return new Meal();
+			var dataParts = row.Split(';');
+			var meal = new Meal();
+
+			meal.MealId = Convert.ToInt32(dataParts[0]);
+			meal.Name = dataParts[1];
+			meal.Description = dataParts[2];
+			meal.Calories = Convert.ToInt16(dataParts[3]);
+
+			foreach (var id in dataParts[4].Trim(',').Split(','))
+			{
+				meal.Allergens.Add(
+					Context.MapOfAllergens[Convert.ToInt32(id)]);
+			}
+			return meal;
 		}
 
 		public static string GetCSVPath(FileTypes fileType)
@@ -99,6 +112,8 @@ namespace MealsToday.Helpers
 		}
 
 		#endregion
+
+		#region Loading methods
 
 		public static List<User> LoadUserData(string filePath)
 		{
@@ -138,7 +153,22 @@ namespace MealsToday.Helpers
 
 		public static List<Meal> LoadMealData(string filePath)
 		{
-			return new List<Meal>();
+			if (!File.Exists(filePath))
+			{
+				throw new FileNotFoundException("File not found", filePath);
+			}
+			var meals = new List<Meal>();
+			string[] allLines = File.ReadAllLines(filePath, Encoding.UTF8);
+
+			for (int i = 1; i < allLines.Length; i++)
+			{
+				var meal = parseMealRow(allLines[i]);
+				meals.Add(meal);
+			}
+
+			return meals;
 		}
+
+		#endregion
 	}
 }

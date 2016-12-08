@@ -29,9 +29,20 @@ namespace MealsToday
 
 			var allergens = CSVLoader.LoadAllergenData(
 					CSVLoader.GetCSVPath(FileTypes.Allergens));
-			
+
 			Context.AllUsers = users;
 			Context.Allergens = allergens;
+
+			var meals = CSVLoader.LoadMealData(
+					CSVLoader.GetCSVPath(FileTypes.Meals));
+
+			Context.Meals = meals;
+
+			foreach (KeyValuePair<int, Allergen> a in Context.MapOfAllergens)
+			{
+				Console.WriteLine($"Allergen with key {a.Key} is {a.Value.Name}");
+			}
+
 		}
 
 		public static void LogIn()

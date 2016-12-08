@@ -10,6 +10,6 @@ namespace MealsToday.Data
 
 		public short Calories { get; set; }
 
-		public List<Allergen> Allergens { get; set; } = new List<Allergen>();
+		public List<Allergen> Allergens { get; private set; } = new List<Allergen>();
 	}
 }
