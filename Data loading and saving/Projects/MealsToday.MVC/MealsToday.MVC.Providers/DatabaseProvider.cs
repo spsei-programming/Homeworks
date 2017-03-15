@@ -12,145 +12,251 @@ using MealsToday.MVC.Providers.Data;
 
 namespace MealsToday.MVC.Providers
 {
-    public class DatabaseProvider
-    {
-        public void CreateAllergen(string name, byte number)
-        {
-            // 1. Create SQL connection
-            // 2. Create SQL command 
-            // 3. Read data if necessary or required with Sql reader or data provider
+	public class DatabaseProvider
+	{
+		protected void Exec(string sql, Action<SqlCommand> what)
+		{
+			var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
 
-            var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				SqlCommand cmd = conn.CreateCommand();
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = conn.CreateCommand();
+				cmd.CommandText = sql;
+				cmd.CommandType = CommandType.Text;
 
-                cmd.CommandText = $"insert into Allergen(Name, Number) " +
-                                  $"values ('{name}', {number})";
-                cmd.CommandType = CommandType.Text;
+				conn.Open();
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
-            }
-        }
+				what(cmd);
 
-        public List<Allergen> GetAllergens()
-        {
-            var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
+				conn.Close();
+			}
+		}
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = conn.CreateCommand();
+		protected void ExecNonQuery(string sql)
+		{
+			Exec(sql, cmd =>
+			{
+				cmd.ExecuteNonQuery();
+			});
+		}
 
-                cmd.CommandText = $"select * from Allergen";
-                cmd.CommandType = CommandType.Text;
+		protected List<T> ExecuteQuery<T>(string sql, Func<SqlDataReader, T> mapFunc, CommandBehavior? behavior = null)
+		{
+			List<T> list = new List<T>(50);
 
-                conn.Open();
+			Exec(sql, cmd =>
+			{
+				using (var reader = cmd.ExecuteReader(!behavior.HasValue?CommandBehavior.Default : behavior.Value))
+				{
+					if (reader.HasRows)
+						while (reader.Read())
+						{
+							list.Add(mapFunc(reader));
+						}
+				}
+			});
 
-                List<Allergen> allergens = new List<Allergen>();
+			return list;
+		}
 
-                using (var reader = cmd.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                        while (reader.Read())
-                        {
-                            Allergen al;
-                            al.Name = reader["Name"] as string;
-                            al.Number = Convert.ToByte(reader["Number"]);
-                            al.AllergenId = Convert.ToInt16(reader["AllergenId"]);
+		protected T ExecuteSingleQuery<T>(string sql, Func<SqlDataReader, T> mapFunc)
+		{
+			return ExecuteQuery(sql, mapFunc, CommandBehavior.SingleRow).FirstOrDefault();
+		}
+		public void CreateAllergen(string name, byte number)
+		{
+			// 1. Create SQL connection
+			// 2. Create SQL command 
+			// 3. Read data if necessary or required with Sql reader or data provider
+			var sql = $"insert into Allergen(Name, Number) " + $"values ('{name}', {number})";
+			ExecNonQuery(sql);
 
-                            allergens.Add(al);
-                        }
-                }
+			#region Not according to DRY principle
 
-                conn.Close();
+			//var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
 
-                return allergens;
-            }
+			//using (SqlConnection conn = new SqlConnection(connectionString))
+			//{
+			//	SqlCommand cmd = conn.CreateCommand();
 
-            return null;
-        }
+			//	cmd.CommandText = $"insert into Allergen(Name, Number) " +
+			//										$"values ('{name}', {number})";
+			//	cmd.CommandType = CommandType.Text;
 
-        public Allergen GetAllergen(short allergenId)
-        {
-            string sql = $"select AllergenId, Name, Number from dbo.Allergen where AllergenId = {allergenId}";
+			//	conn.Open();
+			//	cmd.ExecuteNonQuery();
+			//	conn.Close();
+			//}
 
-            var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
+			#endregion
+		}
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = conn.CreateCommand();
+		public List<Allergen> GetAllergens()
+		{
+			var sql = $"select * from Allergen";
+			return ExecuteQuery(sql, reader =>
+			{
+				Allergen al;
+				al.Name = reader["Name"] as string;
+				//if (reader["Name"] is string) al.Name = (string) reader["Name"];
+				al.Number = Convert.ToByte(reader["Number"]);
+				al.AllergenId = Convert.ToInt16(reader["AllergenId"]);
+				return al;
+			});
 
-                cmd.CommandText = sql;
-                cmd.CommandType = CommandType.Text;
+			#region Not according to DRY principle
 
-                conn.Open();
+			//var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
 
-                List<Allergen> allergens = new List<Allergen>();
+			//using (SqlConnection conn = new SqlConnection(connectionString))
+			//{
+			//	SqlCommand cmd = conn.CreateCommand();
 
-                using (var reader = cmd.ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.CloseConnection))
-                {
-                    if (reader.HasRows)
-                        while (reader.Read())
-                        {
-                            Allergen al;
-                            al.Name = reader["Name"] as string;
-                            al.Number = Convert.ToByte(reader["Number"]);
-                            al.AllergenId = Convert.ToInt16(reader["AllergenId"]);
+			//	cmd.CommandText = 
+			//	cmd.CommandType = CommandType.Text;
 
-                            return al;
-                        }
-                }
+			//	conn.Open();
 
-                
-            }
-            throw new ArgumentOutOfRangeException(nameof(allergenId), $"Could not find an allergen with Id: {allergenId}");
-        }
+			//	List<Allergen> allergens = new List<Allergen>();
 
-        public Allergen UpdateAllergen(short allergenId, byte? number, string name)
-        {
-            string sql = "update dbo.Allergen set ";
+			//	using (var reader = cmd.ExecuteReader())
+			//	{
+			//		if (reader.HasRows)
+			//			while (reader.Read())
+			//			{
+			//				Allergen al;
+			//				al.Name = reader["Name"] as string;
+			//				//if (reader["Name"] is string) al.Name = (string) reader["Name"];
+			//				al.Number = Convert.ToByte(reader["Number"]);
+			//				al.AllergenId = Convert.ToInt16(reader["AllergenId"]);
 
-            if (number != null)
-                sql += $"number = {number},";
-            if (!string.IsNullOrEmpty(name))
-                sql += $"name = '{name}',";
+			//				allergens.Add(al);
+			//			}
+			//	}
 
-            sql = sql.TrimEnd(',');
+			//	conn.Close();
 
-            sql += $" where allergenId = {allergenId}";
+			//	return allergens;
+			//}
 
-            var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
+			#endregion
+		}
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = conn.CreateCommand();
+		public Allergen GetAllergen(short allergenId)
+		{
+			string sql = $"select AllergenId, Name, Number from dbo.Allergen where AllergenId = {allergenId}";
 
-                cmd.CommandText = sql;
-                cmd.CommandType = CommandType.Text;
+			return ExecuteSingleQuery(sql, reader =>
+			{
+				Allergen al;
+				al.Name = reader["Name"] as string;
+				al.Number = Convert.ToByte(reader["Number"]);
+				al.AllergenId = Convert.ToInt16(reader["AllergenId"]);
 
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                conn.Close();
-            }
-            return GetAllergen(allergenId);
-        }
+				return al;
+			});
 
-        public Allergen UpdateAllergen(short allergenId, byte number)
-        {
-            return UpdateAllergen(allergenId, number, string.Empty);
-        }
+			#region Not according to DRY principle
 
-        public Allergen UpdateAllergen(short allergenId, string name)
-        {
-            return UpdateAllergen(allergenId, null, name);
-        }
+			var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
 
-        public void DeleteAllergen(short allergenId)
-        {
-            
-        }
-    }
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				SqlCommand cmd = conn.CreateCommand();
+
+				cmd.CommandText = sql;
+				cmd.CommandType = CommandType.Text;
+
+				conn.Open();
+
+				List<Allergen> allergens = new List<Allergen>();
+
+				using (var reader = cmd.ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.CloseConnection))
+				{
+					if (reader.HasRows)
+						while (reader.Read())
+						{
+							Allergen al;
+							al.Name = reader["Name"] as string;
+							al.Number = Convert.ToByte(reader["Number"]);
+							al.AllergenId = Convert.ToInt16(reader["AllergenId"]);
+
+							return al;
+						}
+				}
+
+
+			}
+			throw new ArgumentOutOfRangeException(nameof(allergenId), $"Could not find an allergen with Id: {allergenId}");
+
+			#endregion
+		}
+
+		public Allergen UpdateAllergen(short allergenId, byte? number, string name)
+		{
+			string sql = "update dbo.Allergen set ";
+
+			if (number != null)
+				sql += $"number = {number},";
+			if (!string.IsNullOrEmpty(name))
+				sql += $"name = '{name}',";
+
+			sql = sql.TrimEnd(',');
+
+			sql += $" where allergenId = {allergenId}";
+
+			ExecNonQuery(sql);
+
+			#region Not according to DRY principle
+
+			//var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
+
+			//using (SqlConnection conn = new SqlConnection(connectionString))
+			//{
+			//	SqlCommand cmd = conn.CreateCommand();
+
+			//	cmd.CommandText = sql;
+			//	cmd.CommandType = CommandType.Text;
+
+			//	conn.Open();
+			//	cmd.ExecuteNonQuery();
+			//	conn.Close();
+			//}
+
+			#endregion
+			return GetAllergen(allergenId);
+		}
+
+		public Allergen UpdateAllergen(short allergenId, byte number)
+		{
+			return UpdateAllergen(allergenId, number, string.Empty);
+		}
+
+		public Allergen UpdateAllergen(short allergenId, string name)
+		{
+			return UpdateAllergen(allergenId, null, name);
+		}
+
+		public void DeleteAllergen(short allergenId)
+		{
+			string sql = $"delete from Allergen where AllergenId = {allergenId}";
+
+			var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
+
+			using (SqlConnection conn = new SqlConnection(connectionString))
+			{
+				SqlCommand cmd = conn.CreateCommand();
+
+				cmd.CommandText = sql;
+				cmd.CommandType = CommandType.Text;
+
+				conn.Open();
+
+				cmd.ExecuteNonQuery();
+
+				conn.Close();
+			}
+		}
+	}
 }
