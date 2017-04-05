@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MealsToday.MVC.Providers;
+using MealsToday.MVC.Providers.Base;
 
 namespace MVCForm.Controllers
 {
@@ -12,7 +13,7 @@ namespace MVCForm.Controllers
 		// GET: Allergens
 		public ActionResult Index()
 		{
-			DatabaseProvider provider = new DatabaseProvider();
+			AllergensProvider provider = new AllergensProvider();
 		    provider.GetAllergens();
             //provider.CreateAllergen($"{DateTime.Now}", (byte) DateTime.Now.Second);
 

@@ -1,0 +1,1 @@
+alert('Long live the Empire');

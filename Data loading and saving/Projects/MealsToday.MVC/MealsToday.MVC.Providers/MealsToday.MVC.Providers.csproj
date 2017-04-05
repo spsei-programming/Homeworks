@@ -41,9 +41,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseProvider.cs" />
+    <Compile Include="AllergensProvider.cs" />
+    <Compile Include="Assets\SQL.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SQL.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Base\BaseDatabaseProvider.cs" />
+    <Compile Include="Base\GenericDatabaseProvider.cs" />
     <Compile Include="Data\Allergen.cs" />
+    <Compile Include="Data\User.cs" />
+    <Compile Include="DBModels\UserInserted.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UsersProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\SQL.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SQL.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

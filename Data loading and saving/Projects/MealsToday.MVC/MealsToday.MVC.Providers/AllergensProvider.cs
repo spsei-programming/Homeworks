@@ -8,64 +8,17 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MealsToday.MVC.Providers.Base;
 using MealsToday.MVC.Providers.Data;
 
 namespace MealsToday.MVC.Providers
 {
-	public class DatabaseProvider
+	public class AllergensProvider : BaseDatabaseProvider
 	{
-		protected void Exec(string sql, Action<SqlCommand> what)
-		{
-			var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
-
-			using (SqlConnection conn = new SqlConnection(connectionString))
-			{
-				SqlCommand cmd = conn.CreateCommand();
-
-				cmd.CommandText = sql;
-				cmd.CommandType = CommandType.Text;
-
-				conn.Open();
-
-				what(cmd);
-
-				conn.Close();
-			}
-		}
-
-		protected void ExecNonQuery(string sql)
-		{
-			Exec(sql, cmd =>
-			{
-				cmd.ExecuteNonQuery();
-			});
-		}
-
-		protected List<T> ExecuteQuery<T>(string sql, Func<SqlDataReader, T> mapFunc, CommandBehavior? behavior = null)
-		{
-			List<T> list = new List<T>(50);
-
-			Exec(sql, cmd =>
-			{
-				using (var reader = cmd.ExecuteReader(!behavior.HasValue?CommandBehavior.Default : behavior.Value))
-				{
-					if (reader.HasRows)
-						while (reader.Read())
-						{
-							list.Add(mapFunc(reader));
-						}
-				}
-			});
-
-			return list;
-		}
-
-		protected T ExecuteSingleQuery<T>(string sql, Func<SqlDataReader, T> mapFunc)
-		{
-			return ExecuteQuery(sql, mapFunc, CommandBehavior.SingleRow).FirstOrDefault();
-		}
 		public void CreateAllergen(string name, byte number)
 		{
+
+
 			// 1. Create SQL connection
 			// 2. Create SQL command 
 			// 3. Read data if necessary or required with Sql reader or data provider
@@ -99,8 +52,8 @@ namespace MealsToday.MVC.Providers
 			{
 				Allergen al;
 				al.Name = reader["Name"] as string;
-				//if (reader["Name"] is string) al.Name = (string) reader["Name"];
-				al.Number = Convert.ToByte(reader["Number"]);
+							//if (reader["Name"] is string) al.Name = (string) reader["Name"];
+							al.Number = Convert.ToByte(reader["Number"]);
 				al.AllergenId = Convert.ToInt16(reader["AllergenId"]);
 				return al;
 			});
@@ -242,21 +195,24 @@ namespace MealsToday.MVC.Providers
 		{
 			string sql = $"delete from Allergen where AllergenId = {allergenId}";
 
-			var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
+			ExecNonQuery(sql);
 
-			using (SqlConnection conn = new SqlConnection(connectionString))
-			{
-				SqlCommand cmd = conn.CreateCommand();
+			//var connectionString = ConfigurationManager.ConnectionStrings["MealsDB"].ConnectionString;
 
-				cmd.CommandText = sql;
-				cmd.CommandType = CommandType.Text;
+			//using (SqlConnection conn = new SqlConnection(connectionString))
+			//{
+			//	SqlCommand cmd = conn.CreateCommand();
 
-				conn.Open();
+			//	cmd.CommandText = sql;
+			//	cmd.CommandType = CommandType.Text;
 
-				cmd.ExecuteNonQuery();
+			//	conn.Open();
 
-				conn.Close();
-			}
+			//	cmd.ExecuteNonQuery();
+
+			//	conn.Close();
+			//}
 		}
+
 	}
 }
